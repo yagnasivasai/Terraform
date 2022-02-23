@@ -1,0 +1,71 @@
+// Jenkinsfile
+String credentialsId = 'Awslogin-id'
+String registryCredential = 'Docker-id'
+try
+{
+    Stage("checkout"){
+      node{
+          cleanWs()
+          checkout scm
+      }
+    }
+    Stage("Building Nginx Images"){
+        node{
+            sh '''
+            cd Automation-Project
+            echo "alias docker='sudo docker'" >> ~/.bashrc
+            sudo usermod -aG docker $USER
+            sudo chmod 777 /var/run/docker.sock
+            docker build -t 1010/nginxweb:1010 .
+            '''
+        }
+    }
+    Stage("Deploy Nginx Images") {
+        node{
+            withDockerRegistry([ credentialsId: registryCredential, url: 'https://registry.hub.docker.com/' ]) {
+          sh 'docker push 1010/nginxweb:1010' 
+          }
+
+        }
+    Stage("Cleanup"){
+        node {
+            sh "docker rmi 1010/nginxweb:1010" 
+        }
+    }
+    // Run terraform steps
+    Stage("Deploy"){
+        node {
+        withCredentials([[
+        $class: 'AmazonWebServicesCredentialsBinding',
+        credentialsId: credentialsId,
+        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+      ]]) {
+          ansiColor('xterm') {
+          sh '''
+          echo $BUILD_NUMBER
+          cd assignment
+          terraform init
+          terraform plan
+          terraform apply -auto-approve
+          terraform show
+          '''
+        }
+        }
+
+        }
+    }
+    currentBuild.result = 'SUCCESS'
+}
+catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException flowError) {
+  currentBuild.result = 'ABORTED'
+  }
+catch (err) {
+  currentBuild.result = 'FAILURE'
+  throw err
+  }
+finally {
+  if (currentBuild.result == 'SUCCESS') {
+    currentBuild.result = 'SUCCESS'
+    }
+}
