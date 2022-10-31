@@ -11,7 +11,7 @@ resource "aws_vpc" "test_vpc" {
     Name = "test_vpc"
   }
 }
-resource "aws_subnet" "test_pub_subnet" {
+/* resource "aws_subnet" "test_pub_subnet" {
   vpc_id                  = aws_vpc.test_vpc.id
   cidr_block              = "10.0.1.0/24"
   map_public_ip_on_launch = "true"
@@ -109,4 +109,4 @@ resource "aws_instance" "ec2test" {
 }
 output "ip" {
   value = aws_instance.ec2test.*.public_ip
-}
+} */
