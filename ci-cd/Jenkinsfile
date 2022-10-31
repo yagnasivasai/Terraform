@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+    tools {
+        git 'Default'
+        terraform 'Terraform'
+    }
+
+    stages {
+        stage('Checkout SCM') {
+            steps {
+                cleanWs()
+                git branch: 'main', credentialsId: 'Github', url: 'https://github.com/yagnasivasai/terraform.git'
+                sh 'git clone https://github.com/yagnasivasai/terraform.git'
+                sh 'cd ci-cd'
+            }
+        }
+        // stage('Terraform Intialization') {
+        //     steps {
+        //         dir("ci-cd") { // this was added
+        //             sh 'terraform init'
+        //         }
+        //     }
+        // }
+         stage('Resource Creation') {
+            steps {
+                 sh '''
+                    echo $BUILD_NUMBER
+                    cd ci-cd
+                    terraform init
+                    terraform plan
+                    terraform apply -auto-approve
+                    terraform show
+                '''
+            }
+        }
+    }
+    post { 
+        always { 
+            cleanWs()
+        }
+    }
+}

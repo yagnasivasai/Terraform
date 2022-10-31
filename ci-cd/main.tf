@@ -102,7 +102,7 @@ resource "aws_instance" "ec2test" {
   key_name                    = "test"
   subnet_id                   = aws_subnet.test_pub_subnet.id
   vpc_security_group_ids      = [aws_security_group.test-sg.id]
-  user_data                   = file("D:\\terraform\\script.sh")
+  /* user_data                   = file("D:\\terraform\\script.sh") */
   tags = {
     Name = "test_instance"
   }
