@@ -11,4 +11,3 @@ resource "aws_vpc" "test_vpc" {
     Name = "test_vpc"
   }
 }
-
