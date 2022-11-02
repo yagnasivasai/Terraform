@@ -13,7 +13,7 @@ resource "aws_instance" "terraform" {
   instance_type               = var.instance_type
   associate_public_ip_address = var.associate_public_ip_address
   key_name                    = var.key_name
-  security_groups             = [aws_security_group.webSG.id]
+  vpc_security_group_ids      = [aws_security_group.webSG.id]
   user_data                   = file("httpd.sh")
 
   tags = {
