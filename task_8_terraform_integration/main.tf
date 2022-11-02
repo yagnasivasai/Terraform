@@ -18,24 +18,23 @@ resource "aws_instance" "terraform" {
     cost-center       = "aws"
     map-migrated      = "asia"
   }
-}
 
-resource "null_resource" "configure_nginx" {
+
+  provisioner "remote-exec" {
+    inline = [
+      "sleep 5m",
+      "sudo docker pull yaznasivasai/web:v1",
+      "sudo docker run -d --name nginxweb -p 8081:80 yaznasivasai/web:v1",
+      "echo $BUILD_NUMBER"
+    ]
     connection {
-    user        = "ubuntu"
-    type        = "ssh"
-    private_key = file("E:\\terraform\\task_8_terraform_integration\\automation.pem")
-    host        = aws_instance.terraform.public_ip
+      user        = "ubuntu"
+      type        = "ssh"
+      private_key = file("E:\\terraform\\task_8_terraform_integration\\automation.pem")
+      host        = aws_instance.terraform.public_ip
     }
-  
-    provisioner "remote-exec" {
-        inline = [
-            "sleep 5m",
-            "sudo docker pull yaznasivasai/web:v1",
-            "sudo docker run -d --name nginxweb -p 8081:80 yaznasivasai/web:v1",
-            "echo $BUILD_NUMBER"
-        ]
-    }
-
+  }
 }
+
+
 
