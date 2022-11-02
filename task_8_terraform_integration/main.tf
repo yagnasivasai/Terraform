@@ -13,6 +13,7 @@ resource "aws_instance" "terraform" {
   instance_type               = var.instance_type
   associate_public_ip_address = var.associate_public_ip_address
   key_name                    = var.key_name
+  security_groups             = [aws_security_group.webSG.id]
   user_data                   = file("httpd.sh")
 
   tags = {
@@ -37,7 +38,7 @@ resource "aws_instance" "terraform" {
       "echo $BUILD_NUMBER"
     ]
     connection {
-      user        = "ubuntu"
+      user        = "ec2-user"
       type        = "ssh"
       private_key = data.aws_secretsmanager_secret_version.secret-version.secret_string
       host        = aws_instance.terraform.public_ip
@@ -46,4 +47,29 @@ resource "aws_instance" "terraform" {
 }
 
 
+resource "aws_security_group" "webSG" {
+  name        = "webSG"
+  description = "Allow ssh  inbound traffic"
 
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+
+  }
+}
