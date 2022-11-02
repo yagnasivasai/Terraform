@@ -1,7 +1,13 @@
 provider "aws" {
   region = var.region
 }
+data "aws_secretsmanager_secret" "sm" {
+  name = "sshkey"
+}
 
+data "aws_secretsmanager_secret_version" "secret-version" {
+  secret_id = data.aws_secretsmanager_secret.sm.id
+}
 resource "aws_instance" "terraform" {
   ami                         = var.ami
   instance_type               = var.instance_type
@@ -18,10 +24,10 @@ resource "aws_instance" "terraform" {
     cost-center       = "aws"
     map-migrated      = "asia"
   }
-  provisioner "file" {
+  /* provisioner "file" {
     source      = "E:\\terraform-iac-usecases\\terraform-aws-ansible-lab\\automation.pem"
     destination = "/home/ubuntu"
-  }
+  } */
 
   provisioner "remote-exec" {
     inline = [
@@ -33,7 +39,7 @@ resource "aws_instance" "terraform" {
     connection {
       user        = "ubuntu"
       type        = "ssh"
-      private_key = file("/home/ubuntu/task_8_terraform_integration/automation.pem")
+      private_key = data.aws_secretsmanager_secret_version.secret-version.secret_string
       host        = aws_instance.terraform.public_ip
     }
   }
