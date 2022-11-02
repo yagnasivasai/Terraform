@@ -2,16 +2,35 @@ pipeline {
     agent any
     tools {
         git 'Default'
-        terraform 'Terraform'
+        terraform 'terraform'
     }
 
     stages {
         stage('Checkout SCM') {
             steps {
                 cleanWs()
-                git branch: 'main', credentialsId: 'Github', url: 'https://github.com/yagnasivasai/terraform.git'
+                git branch: 'terraform-jenkins-pipeline', credentialsId: 'Github', url: 'https://github.com/yagnasivasai/terraform.git'
                 sh 'git clone https://github.com/yagnasivasai/terraform.git'
             }
+        }
+
+        stage('Building Docker Image'){
+            steps{
+                sh '''
+                    cd task_8_terraform_integration
+                    echo "alias docker='sudo docker'" >> ~/.bashrc
+                    sudo usermod -aG docker $USER
+                    sudo chmod 777 /var/run/docker.sock
+                    docker build -t yaznasivasai/web:v1 .
+                '''
+            }
+        }
+
+        stage(){
+            withCredentials([string(credentialsId: 'DockerHub', variable: 'DockerPasswd')]) {
+                sh "docker login -u yaznasivasai -p ${DockerPasswd}"
+            }
+            sh 'docker push yaznasivasai/web:v1'
         }
 
         stage('Resource Creation') {
