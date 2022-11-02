@@ -30,7 +30,7 @@ resource "aws_instance" "terraform" {
     connection {
       user        = "ubuntu"
       type        = "ssh"
-      private_key = file("E:\\terraform\\task_8_terraform_integration\\automation.pem")
+      private_key = file(".\\automation.pem")
       host        = aws_instance.terraform.public_ip
     }
   }
