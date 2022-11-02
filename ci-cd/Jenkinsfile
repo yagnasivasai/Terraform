@@ -1,0 +1,88 @@
+pipeline {
+    agent any
+    tools {
+        git 'Default'
+        terraform 'Terraform'
+    }
+
+    stages {
+        stage('Checkout SCM') {
+            steps {
+                cleanWs()
+                git branch: 'main', credentialsId: 'Github', url: 'https://github.com/yagnasivasai/terraform.git'
+                sh 'git clone https://github.com/yagnasivasai/terraform.git'
+                sh 'cd ci-cd'
+            }
+        }
+
+        stage('Resource Creation') {
+            steps {
+                 sh '''
+                    echo $BUILD_NUMBER
+                    cd ci-cd
+                    terraform init
+                    terraform plan
+                    terraform apply -auto-approve
+                    terraform show
+                '''
+            }
+        }
+    }
+    post { 
+        always { 
+            cleanWs()
+        }
+    }
+}
+
+
+pipeline {
+    agent any
+
+    tools {
+        git 'Default'
+        terraform 'Terraform'
+    }
+
+
+
+    environment {
+        AccessKeyID = "AKIAVBQ2ZK5BVCXQONFN"
+        SecretAccesskey = "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"
+        region = "us-east-1"
+        }
+    stages {
+        stage ('Terraform Init'){
+            steps {
+                sh "export TF_VAR_region='${env.aws_region}' && export TF_VAR_access_key='${env.access_key}' && export TF_VAR_secret_key='${env.secret_key}' && terraform init"
+            }
+        }
+        stage ('Terraform Plan'){
+            steps {
+                sh "export TF_VAR_region='${env.aws_region}' && export TF_VAR_access_key='${env.access_key}' && export TF_VAR_secret_key='${env.secret_key}' && terraform plan -var-file terraform-dev.tfvars" 
+            }
+        }
+        stage ('Terraform Apply & Deploy Docker Image on Webserver'){
+            steps {
+                sh "export TF_VAR_region='${env.aws_region}' && export TF_VAR_access_key='${env.access_key}' && export TF_VAR_secret_key='${env.secret_key}' && terraform apply -var-file terraform-dev.tfvars -auto-approve"
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+        // stage('Terraform Intialization') {
+        //     steps {
+        //         dir("ci-cd") { // this was added
+        //             sh 'terraform init'
+        //         }
+        //     }
+        // }
