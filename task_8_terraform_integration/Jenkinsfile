@@ -26,11 +26,14 @@ pipeline {
             }
         }
 
-        stage(){
-            withCredentials([string(credentialsId: 'DockerHub', variable: 'DockerPasswd')]) {
+        stage('Pushing Docker Images to DockerHub'){
+            steps{
+                withCredentials([string(credentialsId: 'DockerHub', variable: 'DockerPasswd')]) {
                 sh "docker login -u yaznasivasai -p ${DockerPasswd}"
             }
-            sh 'docker push yaznasivasai/web:v1'
+                sh 'docker push yaznasivasai/web:v1'
+            }
+            
         }
 
         stage('Resource Creation') {
