@@ -18,7 +18,10 @@ resource "aws_instance" "terraform" {
     cost-center       = "aws"
     map-migrated      = "asia"
   }
-
+    provisioner "file" {
+    source = "E:\\terraform-iac-usecases\\terraform-aws-ansible-lab\\automation.pem"
+        destination = "/home/ubuntu"
+    }
 
   provisioner "remote-exec" {
     inline = [
@@ -30,7 +33,7 @@ resource "aws_instance" "terraform" {
     connection {
       user        = "ubuntu"
       type        = "ssh"
-      private_key = file(".\\automation.pem")
+      private_key = file("/home/ubuntu/automation.pem")
       host        = aws_instance.terraform.public_ip
     }
   }
