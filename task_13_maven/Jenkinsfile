@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+    tools {
+        git 'Default'
+        terraform 'terraform'
+        maven 'mvn'
+    }
+
+    stages {
+        stage('Checkout SCM') {
+            steps {
+                cleanWs()
+                git 'https://github.com/AnimelaAsif/ci-cd-project.git'
+                sh 'git clone https://github.com/AnimelaAsif/ci-cd-project.git'
+            }
+        }
+
+        stage('Maven build'){
+            steps {
+                sh '''
+                cd ci-cd-project
+                mvn package
+                '''
+            }
+        }
+            
+
+        stage('Building Docker Image'){
+            steps{
+                sh '''
+                    cd ci-cd-project
+                    echo "alias docker='sudo docker'" >> ~/.bashrc
+                    sudo usermod -aG docker $USER
+                    sudo chmod 777 /var/run/docker.sock
+                    docker build -t yaznasivasai/tomcat:v1 .
+                '''
+            }
+        }
+
+        stage('Pushing Docker Images to DockerHub'){
+            steps{
+                withCredentials([string(credentialsId: 'DockerHub', variable: 'DockerPasswd')]) {
+                sh "docker login -u yaznasivasai -p ${DockerPasswd}"
+            }
+                sh 'docker push yaznasivasai/tomcat:v1'
+            }
+            
+        }  
+       
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
