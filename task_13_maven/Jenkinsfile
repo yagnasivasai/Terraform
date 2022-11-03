@@ -10,15 +10,16 @@ pipeline {
         stage('Checkout SCM') {
             steps {
                 cleanWs()
-                git 'https://github.com/AnimelaAsif/ci-cd-project.git'
-                sh 'git clone https://github.com/AnimelaAsif/ci-cd-project.git'
+
+                git branch: 'main', url: 'https://github.com/yagnasivasai/terraform.git'
+                sh 'git clone https://github.com/yagnasivasai/terraform.git'
             }
         }
 
         stage('Maven build'){
             steps {
                 sh '''
-                cd ci-cd-project
+                cd task_13_maven
                 mvn package
                 '''
             }
@@ -28,7 +29,7 @@ pipeline {
         stage('Building Docker Image'){
             steps{
                 sh '''
-                    cd ci-cd-project
+                    cd task_13_maven
                     echo "alias docker='sudo docker'" >> ~/.bashrc
                     sudo usermod -aG docker $USER
                     sudo chmod 777 /var/run/docker.sock
