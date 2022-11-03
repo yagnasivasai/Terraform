@@ -1,0 +1,3 @@
+[submodule "task_12_docker_maven/ci-cd-project"]
+	path = task_12_docker_maven/ci-cd-project
+	url = https://github.com/AnimelaAsif/ci-cd-project.git
