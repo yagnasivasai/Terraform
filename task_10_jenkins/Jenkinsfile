@@ -1,9 +1,9 @@
 pipeline {
     agent any
-    tools {
-        git 'Default'
-        terraform 'Terraform'
-    }
+        tools {
+            git 'Default'
+            terraform 'Terraform'
+        }
 
     stages {
         stage('Checkout SCM') {

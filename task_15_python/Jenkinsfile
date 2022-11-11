@@ -1,0 +1,31 @@
+pipeline {
+  agent any
+  tools {
+        git 'Default'
+        terraform 'Terraform'
+        }
+  stages {
+    stage('SCM') {
+        steps {
+            cleanWS()
+            git 'https://github.com/darkn3rd/webmf-python-flask.git'
+            sh 'git clone https://github.com/darkn3rd/webmf-python-flask.git'
+        }
+    }
+    stage('build') {
+        steps {
+            sh 'pip install -r requirements.txt'
+      }
+    }
+    stage('test') {
+        steps {
+            sh 'python test.py'
+        }
+      post {
+        always {
+          junit 'test-reports/*.xml'
+        }
+      }    
+    }
+  }
+}
