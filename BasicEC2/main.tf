@@ -31,6 +31,9 @@ resource "aws_instance" "ec2test" {
   subnet_id                   = aws_subnet.test_pub_subnet.id
   vpc_security_group_ids      = [aws_security_group.test-sg.id]
   user_data                   = file("ubuntu.sh")
+
+  depends_on = [aws_route_table.test_pub_rt]
+
 }
 # terraform {
 #   backend "s3" {
@@ -47,11 +50,11 @@ resource "null_resource" "nginx" {
     user        = "ubuntu"
     type        = "ssh"
     host        = aws_instance.ec2test.public_ip
-    private_key = file("K8s.pem")
+    private_key = file("~/Downloads/K8s.pem")
   }
   provisioner "remote-exec" {
     inline = [
-      "sleep 5m",
+      "sleep 1m",
       "sudo docker pull 1010/nginxweb:1010",
       "sudo docker run -d --name nginxweb -p 8081:80 1010/nginxweb:1010",
       "echo $BUILD_NUMBER"

@@ -1,3 +1,18 @@
+locals {
+  # This is a local variable for ssh port
+  ssh_port            = 22
+  http_port           = 80
+  all_ports           = 0
+  app_port            = 8080
+  db_port             = 3306
+  any_where           = "0.0.0.0/0"
+  any_protocol        = "-1"
+  any_where_ip6       = "::/0"
+  tcp                 = "tcp"
+  default_description = "Created by Terraform"
+}
+
+
 resource "aws_vpc" "test_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_support   = "true"
@@ -23,22 +38,28 @@ resource "aws_internet_gateway" "test_igw" {
 }
 resource "aws_route_table" "test_pub_rt" {
   vpc_id = aws_vpc.test_vpc.id
-  route = [{
-    carrier_gateway_id         = ""
-    cidr_block                 = "0.0.0.0/0"
-    destination_prefix_list_id = ""
-    egress_only_gateway_id     = ""
-    gateway_id                 = aws_internet_gateway.test_igw.id
-    instance_id                = ""
-    ipv6_cidr_block            = "::/0"
-    local_gateway_id           = ""
-    nat_gateway_id             = ""
-    network_interface_id       = ""
-    transit_gateway_id         = ""
-    vpc_endpoint_id            = ""
-    vpc_peering_connection_id  = ""
-    core_network_arn           = ""
-  }]
+  # route = [{
+  #   carrier_gateway_id         = ""
+  #   cidr_block                 = "0.0.0.0/0"
+  #   destination_prefix_list_id = ""
+  #   egress_only_gateway_id     = ""
+  #   gateway_id                 = aws_internet_gateway.test_igw.id
+  #   instance_id                = ""
+  #   # ipv6_cidr_block            = ""
+  #   local_gateway_id          = ""
+  #   nat_gateway_id            = ""
+  #   network_interface_id      = ""
+  #   transit_gateway_id        = ""
+  #   vpc_endpoint_id           = ""
+  #   vpc_peering_connection_id = ""
+  #   core_network_arn          = ""
+  # }]
+  route {
+    cidr_block = local.any_where
+    gateway_id = aws_internet_gateway.test_igw.id
+  }
+
+  depends_on = [aws_internet_gateway.test_igw]
 }
 resource "aws_route_table_association" "test_pub_rta" {
   subnet_id      = aws_subnet.test_pub_subnet.id
