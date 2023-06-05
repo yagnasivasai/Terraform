@@ -1,23 +1,44 @@
 provider "aws" {
-  region = "us-east-1"
+  region = var.region
 }
 
+data "aws_ami" "example" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-*-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+}
+
+
 resource "aws_instance" "ec2test" {
-  ami                         = "ami-09e67e426f25ce0d7"
-  instance_type               = "t2.micro"
+  ami                         = data.aws_ami.example.id
+  instance_type               = var.instance_type
   associate_public_ip_address = true
-  key_name                    = "test"
+  key_name                    = "K8s"
   subnet_id                   = aws_subnet.test_pub_subnet.id
   vpc_security_group_ids      = [aws_security_group.test-sg.id]
-  user_data                   = file("Shell-Scripts/ubuntu.sh")
+  user_data                   = file("ubuntu.sh")
 }
-terraform {
-  backend "s3" {
-    bucket = "yaznasivasai"
-    key    = "network/terraform.tfstate"
-    region = "us-east-1"
-  }
-}
+# terraform {
+#   backend "s3" {
+#     bucket = "terraformtestingtranslab"
+#     key    = "terraform.tfstate"
+#     region = "us-east-2"
+#   }
+# }
 output "ip" {
   value = aws_instance.ec2test.*.public_ip
 }
@@ -26,7 +47,7 @@ resource "null_resource" "nginx" {
     user        = "ubuntu"
     type        = "ssh"
     host        = aws_instance.ec2test.public_ip
-    private_key = file("test.pem")
+    private_key = file("K8s.pem")
   }
   provisioner "remote-exec" {
     inline = [

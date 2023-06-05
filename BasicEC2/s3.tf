@@ -1,17 +1,19 @@
+resource "random_uuid" "uuid" {}
+
 resource "aws_s3_bucket" "mybucket" {
-  bucket = "9494972917scripts"
+  bucket = "my-s3-bucket-${random_uuid.uuid.result}"
   acl    = "private"
 }
 resource "aws_s3_bucket_object" "singleobject" {
   bucket = aws_s3_bucket.mybucket.id
   key    = "ubuntu.sh"
-  source = "Shell-Scripts/ubuntu.sh"
-  etag   = filemd5("DShell-Scripts/ubuntu.sh")
+  source = "ubuntu.sh"
+  etag   = filemd5("ubuntu.sh")
 }
 resource "aws_s3_bucket_object" "multipleobjects" {
   bucket   = aws_s3_bucket.mybucket.id
-  for_each = fileset("Shell-Scripts/", "*")
+  for_each = fileset("scripts/", "*")
   key      = each.value
-  source   = "Shell-Scripts/${each.value}"
-  etag     = filemd5("Shell-Scripts/${each.value}")
+  source   = "scripts/${each.value}"
+  etag     = filemd5("scripts/${each.value}")
 }
