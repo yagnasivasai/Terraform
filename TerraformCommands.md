@@ -11,6 +11,25 @@
 + https://medium.com/@bhongaleprathamesh/terragrunt-simplifying-infrastructure-management-a7a325a6ded6
 + https://stackoverflow.com/questions/63171356/how-to-subdivide-cidr-subnet-in-terraform-with-cidrsubnet-function
 
+## Github Links
+
++ https://github.com/yagnasivasai/terraform-beginner-to-advanced-resource
+
++ https://github.com/stacksimplify/hashicorp-certified-terraform-associate
+
++ https://github.com/shuaibiyy/awesome-terraform
++ https://github.com/terraform-aws-modules/terraform-aws-ec2-instance
+
++ https://github.com/hashicorp/learn-terraform-provision-eks-cluster
+
++ https://github.com/bugbiteme/demo-tform-aws-vpc
++ https://github.com/smc181002/terraform-aws-vpc
++ https://github.com/stacksimplify/terraform-on-aws-ec2
++ https://github.com/easyawslearn/Terraform-Tutorial
+
++ https://github.com/Prashant-jumpbyte/terraform-aws-vpc-setup
++ https://github.com/TheBellman/terraform-instance-connect
++ https://github.com/addamstj/Terraform-012
 
 
 ## Go terraform statefile
