@@ -44,3 +44,11 @@
 
 
 
+### GCP
++ https://medium.com/google-cloud/how-to-deploy-google-cloud-armor-with-http-s-load-balancer-using-terraform-245805813d3c
++ https://spacelift.io/blog/terraform-best-practices
++ 
+
+
+
++ https://medium.com/devops-dudes/how-to-use-terraform-functions-to-create-dynamic-and-flexible-infrastructure-a8e5020e8a41
