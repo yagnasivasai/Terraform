@@ -9,3 +9,19 @@
 + https://blog.gruntwork.io/terraform-tips-tricks-loops-if-statements-and-gotchas-f739bbae55f9
 + https://www.meshcloud.io/de/blog/advanced-terraform-for-software-engineers/
 + https://medium.com/@bhongaleprathamesh/terragrunt-simplifying-infrastructure-management-a7a325a6ded6
++ https://stackoverflow.com/questions/63171356/how-to-subdivide-cidr-subnet-in-terraform-with-cidrsubnet-function
+
+
+
+## Go terraform statefile
+
++ https://getcoal.medium.com/golang-handling-terraform-files-a37371c621e3
+
++ https://spacelift.io/blog/terraform-locals
+
++ https://blog.gruntwork.io/terraform-up-running-3rd-edition-is-now-published-4b99804d922a
+
++ https://www.davehall.com.au/blog/2022/10/19/tracking-infrastructure-with-ssm-and-terraform/?utm_id=FAUN_The+Chief+I%2FO351_Link_title
+
+
+
